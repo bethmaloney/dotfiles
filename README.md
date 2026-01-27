@@ -6,6 +6,7 @@ My personal configuration files.
 
 - `nvim/` - Neovim configuration
 - `zshrc` - Zsh shell configuration
+- `starship.toml` - Starship prompt configuration
 - `setup.sh` - Tool installation script (Ubuntu 24.04)
 
 ## Quick Start (Ubuntu 24.04)
@@ -21,6 +22,7 @@ chmod +x ~/dotfiles/setup.sh
 # Symlink configs
 ln -sf ~/dotfiles/nvim ~/.config/nvim
 ln -sf ~/dotfiles/zshrc ~/.zshrc
+ln -sf ~/dotfiles/starship.toml ~/.config/starship.toml
 ```
 
 ## Tools Installed
