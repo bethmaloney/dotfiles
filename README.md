@@ -6,16 +6,30 @@ My personal configuration files.
 
 - `nvim/` - Neovim configuration
 - `zshrc` - Zsh shell configuration
+- `setup.sh` - Tool installation script (Ubuntu 24.04)
 
-## Installation
+## Quick Start (Ubuntu 24.04)
 
 ```bash
 # Clone the repo
 git clone https://github.com/bethmaloney/dotfiles.git ~/dotfiles
 
-# Symlink nvim config
-ln -sf ~/dotfiles/nvim ~/.config/nvim
+# Install tools (gh, claude, starship, nvim, zsh)
+chmod +x ~/dotfiles/setup.sh
+~/dotfiles/setup.sh
 
-# Symlink zshrc
+# Symlink configs
+ln -sf ~/dotfiles/nvim ~/.config/nvim
 ln -sf ~/dotfiles/zshrc ~/.zshrc
 ```
+
+## Tools Installed
+
+The setup script installs:
+
+- **gh** - GitHub CLI
+- **claude** - Claude Code CLI
+- **starship** - Cross-shell prompt
+- **nvim** - Neovim (latest stable)
+- **zsh** - Z shell
+- **node** - Node.js (required for Claude Code)
