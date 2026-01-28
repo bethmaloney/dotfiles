@@ -80,6 +80,14 @@ else
     echo "Neovim already installed."
 fi
 
+# Install tmux
+if ! command -v tmux &> /dev/null; then
+    echo "Installing tmux..."
+    sudo apt-get install -y tmux
+else
+    echo "tmux already installed."
+fi
+
 # Install Zsh if not present
 if ! command -v zsh &> /dev/null; then
     echo "Installing Zsh..."
@@ -106,4 +114,5 @@ echo "  3. Symlink your configs:"
 echo "     ln -sf ~/dotfiles/nvim ~/.config/nvim"
 echo "     ln -sf ~/dotfiles/zshrc ~/.zshrc"
 echo "     ln -sf ~/dotfiles/starship.toml ~/.config/starship.toml"
+echo "     ln -sf ~/dotfiles/tmux.conf ~/.tmux.conf"
 echo "  4. Restart your shell or run 'source ~/.zshrc'"
