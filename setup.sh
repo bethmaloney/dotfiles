@@ -104,6 +104,18 @@ else
     echo "Zsh is already the default shell."
 fi
 
+# Configure git identity if not set
+if [ -z "$(git config --global user.email)" ]; then
+    echo ""
+    read -p "Enter your git email: " git_email
+    git config --global user.email "$git_email"
+fi
+
+if [ -z "$(git config --global user.name)" ]; then
+    read -p "Enter your git name: " git_name
+    git config --global user.name "$git_name"
+fi
+
 echo ""
 echo "=== Setup complete! ==="
 echo ""
