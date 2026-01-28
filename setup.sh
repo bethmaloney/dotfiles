@@ -75,6 +75,14 @@ else
     echo "Zsh already installed."
 fi
 
+# Set Zsh as default shell
+if [ "$SHELL" != "$(which zsh)" ]; then
+    echo "Setting Zsh as default shell..."
+    sudo chsh -s $(which zsh) $USER
+else
+    echo "Zsh is already the default shell."
+fi
+
 echo ""
 echo "=== Setup complete! ==="
 echo ""
