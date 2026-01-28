@@ -35,6 +35,7 @@ export NVM_DIR="$HOME/.nvm"
 # PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.dotnet:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH="/snap/bin:$PATH"
