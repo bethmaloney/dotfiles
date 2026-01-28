@@ -29,19 +29,32 @@ else
     echo "GitHub CLI already installed."
 fi
 
-# Install Node.js (required for Claude Code)
-if ! command -v node &> /dev/null; then
-    echo "Installing Node.js..."
-    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-    sudo apt-get install -y nodejs
+# Install nvm and Node.js 24
+export NVM_DIR="$HOME/.nvm"
+if [ ! -d "$NVM_DIR" ]; then
+    echo "Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    echo "Installing Node.js 24..."
+    nvm install 24
+    nvm alias default 24
 else
-    echo "Node.js already installed."
+    echo "nvm already installed."
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
 
-# Install Claude Code
+# Install Python 3
+if ! command -v python3 &> /dev/null; then
+    echo "Installing Python 3..."
+    sudo apt-get install -y python3 python3-pip python3-venv
+else
+    echo "Python 3 already installed."
+fi
+
+# Install Claude Code (native installer, auto-updates)
 if ! command -v claude &> /dev/null; then
     echo "Installing Claude Code..."
-    npm install -g @anthropic-ai/claude-code
+    curl -fsSL https://claude.ai/install.sh | bash
     echo "Claude Code installed. Run 'claude' to authenticate and start."
 else
     echo "Claude Code already installed."
