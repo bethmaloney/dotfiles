@@ -13,6 +13,14 @@ sudo apt-get install -y \
     unzip \
     build-essential
 
+# Set git pull merge strategy if not configured
+if ! git config --global pull.rebase &> /dev/null; then
+    echo "Setting git pull strategy to merge..."
+    git config --global pull.rebase false
+else
+    echo "Git pull strategy already configured."
+fi
+
 # Install GitHub CLI
 if ! command -v gh &> /dev/null; then
     echo "Installing GitHub CLI..."
