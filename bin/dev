@@ -1,0 +1,24 @@
+#!/bin/bash
+# Dev session launcher - creates tmux session named after project
+
+PROJECT_DIR="${1:-.}"
+PROJECT_DIR=$(cd "$PROJECT_DIR" && pwd)
+PROJECT_NAME=$(basename "$PROJECT_DIR")
+
+# Check if session already exists
+if tmux has-session -t "$PROJECT_NAME" 2>/dev/null; then
+    tmux attach -t "$PROJECT_NAME"
+    exit 0
+fi
+
+tmux new-session -d -s "$PROJECT_NAME" -n nvim -c "$PROJECT_DIR"
+tmux send-keys -t "$PROJECT_NAME:nvim" 'nvim .' Enter
+
+tmux new-window -t "$PROJECT_NAME" -n claude -c "$PROJECT_DIR"
+tmux send-keys -t "$PROJECT_NAME:claude" 'claude --dangerously-skip-permissions' Enter
+
+tmux new-window -t "$PROJECT_NAME" -n servers -c "$PROJECT_DIR/src/web"
+tmux split-window -t "$PROJECT_NAME:servers" -v -c "$PROJECT_DIR/src/Capital.ServerCore"
+
+tmux select-window -t "$PROJECT_NAME:nvim"
+tmux attach -t "$PROJECT_NAME"
