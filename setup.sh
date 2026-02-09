@@ -68,6 +68,20 @@ else
     echo "Claude Code already installed."
 fi
 
+# Configure Claude Code status line if not already set
+CLAUDE_SETTINGS="$HOME/.claude/settings.json"
+mkdir -p "$HOME/.claude"
+if [ ! -f "$CLAUDE_SETTINGS" ]; then
+    echo '{}' > "$CLAUDE_SETTINGS"
+fi
+if ! jq -e '.statusLine' "$CLAUDE_SETTINGS" &> /dev/null; then
+    echo "Configuring Claude Code status line..."
+    jq '. + {"statusLine": {"type": "command", "command": "'"$HOME"'/dotfiles/claude-statusline.sh"}}' \
+        "$CLAUDE_SETTINGS" > "$CLAUDE_SETTINGS.tmp" && mv "$CLAUDE_SETTINGS.tmp" "$CLAUDE_SETTINGS"
+else
+    echo "Claude Code status line already configured."
+fi
+
 # Install Starship prompt
 if ! command -v starship &> /dev/null; then
     echo "Installing Starship..."
