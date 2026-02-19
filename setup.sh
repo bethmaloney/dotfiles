@@ -82,6 +82,19 @@ else
     echo "Claude Code status line already configured."
 fi
 
+# Install Atlassian CLI (acli)
+if ! command -v acli &> /dev/null; then
+    echo "Installing Atlassian CLI..."
+    sudo apt-get install -y wget gnupg2
+    wget -nv -O- https://acli.atlassian.com/gpg/public-key.asc | sudo gpg --dearmor -o /etc/apt/keyrings/acli-archive-keyring.gpg
+    sudo chmod go+r /etc/apt/keyrings/acli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/acli-archive-keyring.gpg] https://acli.atlassian.com/linux/deb stable main" | sudo tee /etc/apt/sources.list.d/acli.list > /dev/null
+    sudo apt-get update
+    sudo apt-get install -y acli
+else
+    echo "Atlassian CLI already installed."
+fi
+
 # Install Starship prompt
 if ! command -v starship &> /dev/null; then
     echo "Installing Starship..."
