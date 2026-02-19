@@ -20,6 +20,11 @@ zstyle ':completion:*' menu select
 bindkey -e
 bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
+# Ctrl+Arrow key bindings
+bindkey "^[[1;5C" forward-word      # Ctrl+Right
+bindkey "^[[1;5D" backward-word     # Ctrl+Left
+bindkey "^[[1;5A" up-line-or-history    # Ctrl+Up
+bindkey "^[[1;5B" down-line-or-history  # Ctrl+Down
 
 # Aliases
 alias ls='ls --color=auto'
