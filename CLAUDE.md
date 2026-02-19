@@ -10,16 +10,9 @@ Personal dotfiles repository managing a complete development environment for Ubu
 
 Run `./setup.sh` to install tools and dependencies. The script is idempotent (safe to run multiple times) and will:
 - Install core tools: gh, claude CLI, starship, nvim, zsh, node (via nvm), python3, tmux
+- Symlink config files (zshrc, nvim, starship, tmux) to their expected locations
 - Prompt for git identity if not configured
 - Set zsh as default shell
-
-After running setup, create symlinks:
-```bash
-ln -sf ~/dotfiles/nvim ~/.config/nvim
-ln -sf ~/dotfiles/zshrc ~/.zshrc
-ln -sf ~/dotfiles/starship.toml ~/.config/starship.toml
-ln -sf ~/dotfiles/tmux.conf ~/.tmux.conf
-```
 
 ## Configuration Files
 

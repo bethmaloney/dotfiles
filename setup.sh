@@ -138,16 +138,20 @@ if [ -z "$(git config --global user.name)" ]; then
     git config --global user.name "$git_name"
 fi
 
+# Create config symlinks
+echo "Creating config symlinks..."
+mkdir -p ~/.config
+ln -sf ~/dotfiles/nvim ~/.config/nvim
+ln -sf ~/dotfiles/zshrc ~/.zshrc
+ln -sf ~/dotfiles/starship.toml ~/.config/starship.toml
+ln -sf ~/dotfiles/tmux.conf ~/.tmux.conf
+mkdir -p ~/bin
+ln -sf ~/dotfiles/bin/dev ~/bin/dev
+
 echo ""
 echo "=== Setup complete! ==="
 echo ""
 echo "Next steps:"
 echo "  1. Run 'gh auth login' to authenticate with GitHub"
 echo "  2. Run 'claude' to authenticate with Anthropic"
-echo "  3. Symlink your configs:"
-echo "     ln -sf ~/dotfiles/nvim ~/.config/nvim"
-echo "     ln -sf ~/dotfiles/zshrc ~/.zshrc"
-echo "     ln -sf ~/dotfiles/starship.toml ~/.config/starship.toml"
-echo "     ln -sf ~/dotfiles/tmux.conf ~/.tmux.conf"
-echo "     ln -sf ~/dotfiles/bin/dev ~/bin/dev"
-echo "  4. Restart your shell or run 'source ~/.zshrc'"
+echo "  3. Restart your shell or run 'source ~/.zshrc'"
