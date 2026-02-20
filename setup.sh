@@ -1,17 +1,38 @@
 #!/bin/bash
 set -e
 
-echo "Setting up development environment on Ubuntu 24.04..."
+# Detect OS
+OS="$(uname -s)"
+case "$OS" in
+    Linux*)  OS_TYPE="linux" ;;
+    Darwin*) OS_TYPE="mac" ;;
+    *)       echo "Unsupported OS: $OS"; exit 1 ;;
+esac
 
-# Update package list
-sudo apt-get update
+echo "Setting up development environment ($OS_TYPE)..."
 
-# Install common dependencies
-sudo apt-get install -y \
-    curl \
-    git \
-    unzip \
-    build-essential
+# --- Package manager setup and base dependencies ---
+if [ "$OS_TYPE" = "linux" ]; then
+    sudo apt-get update
+    sudo apt-get install -y \
+        curl \
+        git \
+        unzip \
+        build-essential \
+        jq
+elif [ "$OS_TYPE" = "mac" ]; then
+    if ! command -v brew &> /dev/null; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    # Ensure brew is on PATH for this session (Apple Silicon vs Intel)
+    if [ -f /opt/homebrew/bin/brew ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [ -f /usr/local/bin/brew ]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    brew install jq
+fi
 
 # Set git pull merge strategy if not configured
 if ! git config --global pull.rebase &> /dev/null; then
@@ -24,14 +45,18 @@ fi
 # Install GitHub CLI
 if ! command -v gh &> /dev/null; then
     echo "Installing GitHub CLI..."
-    (type -p wget >/dev/null || sudo apt-get install wget -y) \
-    && sudo mkdir -p -m 755 /etc/apt/keyrings \
-    && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-    && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
-    && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-    && sudo apt-get update \
-    && sudo apt-get install gh -y
+    if [ "$OS_TYPE" = "linux" ]; then
+        (type -p wget >/dev/null || sudo apt-get install wget -y) \
+        && sudo mkdir -p -m 755 /etc/apt/keyrings \
+        && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+        && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt-get update \
+        && sudo apt-get install gh -y
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew install gh
+    fi
     echo "GitHub CLI installed. Run 'gh auth login' to authenticate."
 else
     echo "GitHub CLI already installed."
@@ -54,7 +79,11 @@ fi
 # Install Python 3
 if ! command -v python3 &> /dev/null; then
     echo "Installing Python 3..."
-    sudo apt-get install -y python3 python3-pip python3-venv
+    if [ "$OS_TYPE" = "linux" ]; then
+        sudo apt-get install -y python3 python3-pip python3-venv
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew install python3
+    fi
 else
     echo "Python 3 already installed."
 fi
@@ -85,12 +114,17 @@ fi
 # Install Atlassian CLI (acli)
 if ! command -v acli &> /dev/null; then
     echo "Installing Atlassian CLI..."
-    sudo apt-get install -y wget gnupg2
-    wget -nv -O- https://acli.atlassian.com/gpg/public-key.asc | sudo gpg --dearmor -o /etc/apt/keyrings/acli-archive-keyring.gpg
-    sudo chmod go+r /etc/apt/keyrings/acli-archive-keyring.gpg
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/acli-archive-keyring.gpg] https://acli.atlassian.com/linux/deb stable main" | sudo tee /etc/apt/sources.list.d/acli.list > /dev/null
-    sudo apt-get update
-    sudo apt-get install -y acli
+    if [ "$OS_TYPE" = "linux" ]; then
+        sudo apt-get install -y wget gnupg2
+        wget -nv -O- https://acli.atlassian.com/gpg/public-key.asc | sudo gpg --dearmor -o /etc/apt/keyrings/acli-archive-keyring.gpg
+        sudo chmod go+r /etc/apt/keyrings/acli-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/acli-archive-keyring.gpg] https://acli.atlassian.com/linux/deb stable main" | sudo tee /etc/apt/sources.list.d/acli.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install -y acli
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew tap atlassian/acli
+        brew install acli
+    fi
 else
     echo "Atlassian CLI already installed."
 fi
@@ -98,7 +132,11 @@ fi
 # Install Starship prompt
 if ! command -v starship &> /dev/null; then
     echo "Installing Starship..."
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
+    if [ "$OS_TYPE" = "mac" ]; then
+        brew install starship
+    else
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
+    fi
 else
     echo "Starship already installed."
 fi
@@ -106,11 +144,15 @@ fi
 # Install Neovim (latest stable)
 if ! command -v nvim &> /dev/null; then
     echo "Installing Neovim..."
-    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-    sudo rm -rf /opt/nvim
-    sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-    sudo ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
-    rm nvim-linux-x86_64.tar.gz
+    if [ "$OS_TYPE" = "linux" ]; then
+        curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+        sudo rm -rf /opt/nvim
+        sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+        sudo ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+        rm nvim-linux-x86_64.tar.gz
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew install neovim
+    fi
 else
     echo "Neovim already installed."
 fi
@@ -118,15 +160,23 @@ fi
 # Install tmux
 if ! command -v tmux &> /dev/null; then
     echo "Installing tmux..."
-    sudo apt-get install -y tmux
+    if [ "$OS_TYPE" = "linux" ]; then
+        sudo apt-get install -y tmux
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew install tmux
+    fi
 else
     echo "tmux already installed."
 fi
 
-# Install Zsh if not present
+# Install Zsh if not present (macOS ships with zsh)
 if ! command -v zsh &> /dev/null; then
     echo "Installing Zsh..."
-    sudo apt-get install -y zsh
+    if [ "$OS_TYPE" = "linux" ]; then
+        sudo apt-get install -y zsh
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew install zsh
+    fi
 else
     echo "Zsh already installed."
 fi
@@ -134,7 +184,11 @@ fi
 # Set Zsh as default shell
 if [ "$SHELL" != "$(which zsh)" ]; then
     echo "Setting Zsh as default shell..."
-    sudo chsh -s $(which zsh) $USER
+    if [ "$OS_TYPE" = "linux" ]; then
+        sudo chsh -s $(which zsh) $USER
+    elif [ "$OS_TYPE" = "mac" ]; then
+        chsh -s $(which zsh)
+    fi
 else
     echo "Zsh is already the default shell."
 fi

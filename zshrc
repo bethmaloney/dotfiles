@@ -27,7 +27,11 @@ bindkey "^[[1;5A" up-line-or-history    # Ctrl+Up
 bindkey "^[[1;5B" down-line-or-history  # Ctrl+Down
 
 # Aliases
-alias ls='ls --color=auto'
+if [[ "$(uname)" == "Darwin" ]]; then
+    alias ls='ls -G'
+else
+    alias ls='ls --color=auto'
+fi
 alias ll='ls -la'
 alias la='ls -A'
 alias grep='grep --color=auto'
