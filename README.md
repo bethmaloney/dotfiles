@@ -8,6 +8,8 @@ My personal configuration files.
 - `zshrc` - Zsh shell configuration
 - `starship.toml` - Starship prompt configuration
 - `setup.sh` - Tool installation script (Ubuntu 24.04)
+- `setup-podman.sh` - Podman container environment setup
+- `setup-dotnet.sh` - .NET 10 SDK and SQL command-line tools setup
 
 ## Quick Start (Ubuntu 24.04)
 
@@ -35,3 +37,15 @@ The setup script installs:
 - **nvim** - Neovim (latest stable)
 - **zsh** - Z shell
 - **node** - Node.js (required for Claude Code)
+
+## Optional Setup Scripts
+
+Run these separately when needed:
+
+```bash
+# Podman container environment (+ docker symlink)
+~/dotfiles/setup-podman.sh
+
+# .NET 10 SDK + sqlcmd (for the Capital backend)
+~/dotfiles/setup-dotnet.sh
+```

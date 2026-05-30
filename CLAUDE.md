@@ -14,6 +14,10 @@ Run `./setup.sh` to install tools and dependencies. The script is idempotent (sa
 - Prompt for git identity if not configured
 - Set zsh as default shell
 
+Optional, run-as-needed setup scripts (also idempotent, support macOS and Linux):
+- `./setup-podman.sh` - Podman + podman-compose, with a `docker` -> `podman` symlink
+- `./setup-dotnet.sh` - .NET 10 SDK (to `~/.dotnet` via the official channel-pinned installer) and the `sqlcmd` SQL Server CLI
+
 ## Configuration Files
 
 | File | Purpose |
