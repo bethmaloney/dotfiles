@@ -33,6 +33,21 @@ install_podman_compose() {
     esac
 }
 
+# Rosetta lets the Podman VM run amd64 images quickly on Apple Silicon under
+# the default applehv provider. It's only relevant on arm64 Macs; Intel Macs
+# run amd64 natively.
+install_rosetta() {
+    if [ "$(uname -m)" != "arm64" ]; then
+        return
+    fi
+    if [ -d "/Library/Apple/usr/share/rosetta" ] || /usr/bin/pgrep -q oahd; then
+        echo "Rosetta already installed."
+    else
+        echo "Installing Rosetta (needed to run amd64 images on Apple Silicon)..."
+        softwareupdate --install-rosetta --agree-to-license
+    fi
+}
+
 # Install Podman
 if ! command -v podman &> /dev/null; then
     echo "Installing Podman..."
@@ -67,6 +82,9 @@ fi
 
 # Initialize Podman machine on macOS (Podman runs in a VM on Mac)
 if [ "$OS" = "Darwin" ]; then
+    # Install Rosetta before the machine starts so the VM can use it for amd64
+    install_rosetta
+
     if ! podman machine list --format "{{.Name}}" 2>/dev/null | grep -q .; then
         echo "Initializing Podman machine..."
         podman machine init
