@@ -48,6 +48,36 @@ install_rosetta() {
     fi
 }
 
+# Having Rosetta installed on the host is not enough: on kernel >=6.13 Podman's
+# VM image ships with Rosetta gated OFF behind the marker file
+# /etc/containers/enable-rosetta, so amd64 images fall back to QEMU. Under QEMU
+# the amd64 SQL Server binary segfaults, so we opt back in. Creating the marker
+# makes rosetta-activation.service register the Rosetta binfmt handler on every
+# boot; a one-off restart activates it cleanly without racing systemd-binfmt.
+enable_rosetta_in_vm() {
+    [ "$(uname -m)" = "arm64" ] || return 0
+
+    # The guest must be running so we can configure it (init does not start it).
+    podman machine start >/dev/null 2>&1 || true
+
+    if podman machine ssh 'test -e /proc/sys/fs/binfmt_misc/rosetta' 2>/dev/null; then
+        echo "Rosetta already active in the VM."
+        return 0
+    fi
+
+    echo "Enabling Rosetta inside the Podman VM (amd64 SQL Server needs it)..."
+    podman machine ssh 'sudo touch /etc/containers/enable-rosetta'
+    echo "Restarting machine to activate Rosetta..."
+    podman machine stop
+    podman machine start
+
+    if podman machine ssh 'test -e /proc/sys/fs/binfmt_misc/rosetta' 2>/dev/null; then
+        echo "Rosetta is active in the VM."
+    else
+        echo "WARNING: Rosetta did not activate; amd64 images will run under slow QEMU."
+    fi
+}
+
 # Install Podman
 if ! command -v podman &> /dev/null; then
     echo "Installing Podman..."
@@ -87,15 +117,26 @@ if [ "$OS" = "Darwin" ]; then
 
     if ! podman machine list --format "{{.Name}}" 2>/dev/null | grep -q .; then
         echo "Initializing Podman machine..."
-        podman machine init
-        echo "Start the machine with: podman machine start"
+        # SQL Server requires >=2GB RAM (the default is too low) and a roomy
+        # disk; leave one host core free and size the rest for the containers.
+        cpus=$(( $(sysctl -n hw.ncpu) - 1 ))
+        [ "$cpus" -lt 1 ] && cpus=1
+        podman machine init --cpus "$cpus" --memory 8192 --disk-size 100
     else
         echo "Podman machine already initialized."
     fi
+
+    # Wire Rosetta into the VM (idempotent; fixes existing machines too).
+    enable_rosetta_in_vm
 fi
 
 echo ""
 echo "=== Podman setup complete! ==="
 echo ""
+if podman machine inspect --format '{{.State}}' 2>/dev/null | grep -q running; then
+    echo "Podman machine is running and ready."
+else
+    echo "Start the machine with: podman machine start"
+fi
 echo "You can now use 'podman' or 'docker' commands interchangeably."
 echo "For docker-compose, use 'podman-compose' instead."

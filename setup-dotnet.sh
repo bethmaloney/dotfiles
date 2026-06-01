@@ -72,11 +72,48 @@ else
     install_sqlcmd
 fi
 
+# --- SqlPackage (DACPAC build/publish for database deployment) ---
+# Installed as a .NET global tool; lands in ~/.dotnet/tools which is on PATH.
+if command -v sqlpackage &> /dev/null; then
+    echo "sqlpackage already installed."
+else
+    echo "Installing sqlpackage (.NET global tool)..."
+    dotnet tool install -g microsoft.sqlpackage
+fi
+
+# --- PowerShell 7+ (pwsh) ---
+# Required by the cross-platform Deploy-Database.ps1 script.
+install_pwsh() {
+    case "$OS" in
+        Linux)
+            echo "Installing PowerShell..."
+            # Relies on the Microsoft package repo added during the sqlcmd install above
+            sudo apt-get install -y powershell
+            ;;
+        Darwin)
+            echo "Installing PowerShell..."
+            brew install powershell
+            ;;
+        *)
+            echo "Unsupported OS: $OS"
+            exit 1
+            ;;
+    esac
+}
+
+if command -v pwsh &> /dev/null; then
+    echo "PowerShell already installed."
+else
+    install_pwsh
+fi
+
 echo ""
 echo "=== .NET setup complete! ==="
 echo ""
 echo "Installed:"
 echo "  - .NET SDK ($DOTNET_CHANNEL) at $DOTNET_DIR"
 echo "  - sqlcmd (SQL Server command-line tool)"
+echo "  - sqlpackage (DACPAC deployment tool)"
+echo "  - pwsh (PowerShell 7+)"
 echo ""
-echo "Restart your shell or run 'source ~/.zshrc' so 'dotnet' and 'sqlcmd' are on PATH."
+echo "Restart your shell or run 'source ~/.zshrc' so 'dotnet', 'sqlcmd', 'sqlpackage' and 'pwsh' are on PATH."
