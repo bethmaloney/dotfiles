@@ -169,6 +169,18 @@ else
     echo "tmux already installed."
 fi
 
+# Install direnv (per-directory env vars; used by Capital multi-clone .envrc setup)
+if ! command -v direnv &> /dev/null; then
+    echo "Installing direnv..."
+    if [ "$OS_TYPE" = "linux" ]; then
+        sudo apt-get install -y direnv
+    elif [ "$OS_TYPE" = "mac" ]; then
+        brew install direnv
+    fi
+else
+    echo "direnv already installed."
+fi
+
 # Install Zsh if not present (macOS ships with zsh)
 if ! command -v zsh &> /dev/null; then
     echo "Installing Zsh..."

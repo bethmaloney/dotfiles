@@ -50,5 +50,8 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH="/snap/bin:$PATH"
 
+# direnv (per-directory env vars, e.g. Capital multi-clone .envrc)
+command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
+
 # Starship prompt
 eval "$(starship init zsh)"
