@@ -18,6 +18,7 @@ Optional, run-as-needed setup scripts (also idempotent, support macOS and Linux)
 - `./setup-podman.sh` - Podman + podman-compose, with a `docker` -> `podman` symlink
 - `./setup-colima.sh` - Colima (Docker engine in a VM) + docker CLI / compose plugin
 - `./setup-dotnet.sh` - .NET 10 SDK (to `~/.dotnet` via the official channel-pinned installer) and the `sqlcmd` SQL Server CLI
+- `./setup-apps.sh` - GUI applications via Homebrew Cask (Claude, Ghostty, Edge, Outlook, Teams, VS Code); macOS-only
 
 ## Configuration Files
 

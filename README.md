@@ -11,6 +11,7 @@ My personal configuration files.
 - `setup-podman.sh` - Podman container environment setup
 - `setup-colima.sh` - Colima container environment setup (Docker engine)
 - `setup-dotnet.sh` - .NET 10 SDK and SQL command-line tools setup
+- `setup-apps.sh` - GUI applications via Homebrew Cask (macOS)
 
 ## Quick Start (Ubuntu 24.04)
 
@@ -52,4 +53,7 @@ Run these separately when needed:
 
 # .NET 10 SDK + sqlcmd (for the Capital backend)
 ~/dotfiles/setup-dotnet.sh
+
+# GUI apps via Homebrew Cask (macOS): Claude, Ghostty, Edge, Outlook, Teams, VS Code
+~/dotfiles/setup-apps.sh
 ```
