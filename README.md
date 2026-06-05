@@ -9,6 +9,7 @@ My personal configuration files.
 - `starship.toml` - Starship prompt configuration
 - `setup.sh` - Tool installation script (Ubuntu 24.04)
 - `setup-podman.sh` - Podman container environment setup
+- `setup-colima.sh` - Colima container environment setup (Docker engine)
 - `setup-dotnet.sh` - .NET 10 SDK and SQL command-line tools setup
 
 ## Quick Start (Ubuntu 24.04)
@@ -45,6 +46,9 @@ Run these separately when needed:
 ```bash
 # Podman container environment (+ docker symlink)
 ~/dotfiles/setup-podman.sh
+
+# Colima container environment (Docker engine in a VM)
+~/dotfiles/setup-colima.sh
 
 # .NET 10 SDK + sqlcmd (for the Capital backend)
 ~/dotfiles/setup-dotnet.sh
