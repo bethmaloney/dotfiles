@@ -50,6 +50,11 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH="/snap/bin:$PATH"
 
+# VS Code CLI (macOS: `code` lives inside the app bundle)
+if [[ "$(uname)" == "Darwin" ]]; then
+    export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+fi
+
 # direnv (per-directory env vars, e.g. Capital multi-clone .envrc)
 command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
 
