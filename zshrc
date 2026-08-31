@@ -45,11 +45,19 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.dotnet:$PATH"
-export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH="/snap/bin:$PATH"
 export PATH="$PATH:$HOME/.maestro/bin"
+
+# .NET (SDK installed to ~/.dotnet by setup-dotnet.sh). DOTNET_ROOT is what
+# native apphosts (e.g. Aspire) read to locate the SDK - without it they look
+# only in /usr/local/share/dotnet and fail to discover this install.
+if [ -d "$HOME/.dotnet" ]; then
+    export DOTNET_ROOT="$HOME/.dotnet"
+    export DOTNET_ROOT_ARM64="$DOTNET_ROOT"
+    export PATH="$DOTNET_ROOT:$PATH"
+    export PATH="$DOTNET_ROOT/tools:$PATH"
+fi
 
 # Java (Homebrew keg-only OpenJDK 21) - needed by Maestro CLI/MCP
 if [ -d "/opt/homebrew/opt/openjdk@21" ]; then
