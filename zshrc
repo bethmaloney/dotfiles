@@ -60,3 +60,6 @@ command -v direnv &> /dev/null && eval "$(direnv hook zsh)"
 
 # Starship prompt
 eval "$(starship init zsh)"
+
+# Machine-local overrides (credentials, per-machine paths). Untracked on purpose.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
