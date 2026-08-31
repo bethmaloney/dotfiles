@@ -49,6 +49,13 @@ export PATH="$HOME/.dotnet:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="/opt/mssql-tools18/bin:$PATH"
 export PATH="/snap/bin:$PATH"
+export PATH="$PATH:$HOME/.maestro/bin"
+
+# Java (Homebrew keg-only OpenJDK 21) - needed by Maestro CLI/MCP
+if [ -d "/opt/homebrew/opt/openjdk@21" ]; then
+    export JAVA_HOME="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+    export PATH="$JAVA_HOME/bin:$PATH"
+fi
 
 # VS Code CLI (macOS: `code` lives inside the app bundle)
 if [[ "$(uname)" == "Darwin" ]]; then

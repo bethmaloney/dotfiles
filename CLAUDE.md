@@ -9,7 +9,7 @@ Personal dotfiles repository managing a complete development environment for Ubu
 ## Setup
 
 Run `./setup.sh` to install tools and dependencies. The script is idempotent (safe to run multiple times) and will:
-- Install core tools: gh, claude CLI, starship, nvim, zsh, node (via nvm), python3, tmux
+- Install core tools: gh, claude CLI, starship, nvim, zsh, node (via nvm), python3, tmux, java (OpenJDK 21, macOS only - for Maestro)
 - Symlink config files (zshrc, nvim, starship, tmux) to their expected locations
 - Prompt for git identity if not configured
 - Set zsh as default shell
@@ -19,6 +19,7 @@ Optional, run-as-needed setup scripts (also idempotent, support macOS and Linux)
 - `./setup-colima.sh` - Colima (Docker engine in a VM) + docker CLI / compose plugin
 - `./setup-dotnet.sh` - .NET 10 SDK (to `~/.dotnet` via the official channel-pinned installer) and the `sqlcmd` SQL Server CLI
 - `./setup-apps.sh` - GUI applications via Homebrew Cask (Claude, Ghostty, Edge, Outlook, Teams, VS Code); macOS-only
+- `./setup-maestro.sh` - Maestro mobile UI test runner (to `~/.maestro`); needs a JDK, iOS flows are macOS-only
 
 ## Configuration Files
 

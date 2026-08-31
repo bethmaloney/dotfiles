@@ -88,6 +88,16 @@ else
     echo "Python 3 already installed."
 fi
 
+# Install Java (OpenJDK 21) - required by the Maestro CLI/MCP (macOS only)
+if [ "$OS_TYPE" = "mac" ]; then
+    if ! brew list openjdk@21 &> /dev/null; then
+        echo "Installing OpenJDK 21..."
+        brew install openjdk@21
+    else
+        echo "OpenJDK 21 already installed."
+    fi
+fi
+
 # Install Claude Code (native installer, auto-updates)
 if ! command -v claude &> /dev/null; then
     echo "Installing Claude Code..."
